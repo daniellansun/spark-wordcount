@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'groovy'
+}
+
+group 'me.sunlan'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+    mavenCentral()
+}
+
+ext {
+    sparkVersion = '2.3.0'
+    groovyVersion = '3.0.0-alpha-2'
+    junitVersion = '4.12'
+}
+
+dependencies {
+    compile "org.apache.spark:spark-sql_2.11:$sparkVersion"
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile "junit:junit:$junitVersion"
+}
+
+task cleanOutput(type: Delete) {
+    delete 'output'
+}
+
+task runSpark(type: JavaExec, dependsOn: [cleanOutput, build]) {
+    environment 'HADOOP_HOME', "$projectDir" // avoid java.io.IOException: (null) entry in command string: null chmod 0644
+//    environment 'PATH', "${System.getenv('PATH')};$projectDir/bin;"
+
+    main = 'me.sunlan.sparklabs.wordcount.WordCount'
+    classpath = sourceSets.main.runtimeClasspath
+    args 'input', 'output'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.7'
+}

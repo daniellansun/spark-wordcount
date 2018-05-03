@@ -1,0 +1,2 @@
+For information on how to use RStudio check out our online documentation
+For documentation on running your own RStudio Server see the server getting started guide
